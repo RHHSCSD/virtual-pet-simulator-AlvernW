@@ -17,7 +17,7 @@ public class VirtualPet {
         Scanner s = new Scanner(System.in);
         //Part 1: Menu
         String pet = "";
-        System.out.println("Welcome to your virutal pet Simulator");
+        System.out.println("Welcome to Petopia");
         System.out.println("^-^");
         while(true){
             //Splash Screen
@@ -28,8 +28,43 @@ public class VirtualPet {
             switch (option) {
                 case "1":
                 case "Start":
-                    System.out.println("What pet do you want");
-                    
+                    System.out.println("What pet do you want:\n1:Dog\n2:Cat\n3:Child");
+                    int petChoice = s.nextInt();
+                    switch(petChoice){
+                        case 1: 
+                            pet = """
+                                     __      _
+                                   o'')}____//
+                                    `_/      )
+                                    (_(_/-(_/""";
+                            break;
+                        case 2:
+                            pet = """
+                                    /\\_/\\  (
+                                   ( ^.^ ) _)
+                                     \\"/  (
+                                   ( | | )
+                                  (__d b__)""";
+                            break;
+                        case 3:
+                            pet = """
+                                    ,---------.
+                                    ||\"\"\"\"\"""||
+                                    ||       ||
+                                    |/-->&<--\\|
+                                    |  (._.)  |
+                                    |  ( @ )  |
+                                    | /|`"'|\\ |
+                                   //(_\\___/_)\\\\
+                                   \\\\_()___()_//
+                                    `+---I---+'
+                                    |\\(_)|(_)/|
+                                   _|j\"\"\"\"\"""|j_
+                                   | |_______| |
+                                   |_|       |_| """;
+                            break;
+                    }
+                    System.out.println(pet);
                     break;
                 case "2":
                 case "Instructions":
