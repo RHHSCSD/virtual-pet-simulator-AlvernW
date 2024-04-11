@@ -119,54 +119,7 @@ public class VirtualPet {
                     System.out.println("Naming: \n1.Choose\n2.Generate");
                     int choice = s.nextInt();
 
-                    //If choice is 1, user inputs the pet name
-                    if (choice == 1) {
-                        System.out.println("Input your desired pet name:");
-                        petName = s.next();
-
-                        //If choice is 2, pet name is randomly generated
-                    } else if (choice == 2) {
-                        //Length of name (not including double letter possibility)
-                        int petNL = r.nextInt(5) + 4;
-
-                        //Loop to generate random characters
-                        for (int i = 0; i < petNL; i++) {
-                            //Double letter possibility = 1 in 5
-                            int doubleLetter = r.nextInt(5);
-                            int letter;
-
-                            //Checks to see if letter will be consonant
-                            if (i % 2 == 0) {
-                                //Checks to see if it's not the first letter
-                                if (!(petName.length() == 0)) {
-                                    letter = r.nextInt(21);
-                                    petName += consonant.charAt(letter);
-
-                                    //Double letter if the random numberis 0
-                                    if (doubleLetter == 0) {
-                                        petName += consonant.charAt(letter);
-                                    }
-
-                                    //Since it's first letter = capitilized
-                                } else {
-                                    letter = r.nextInt(21);
-                                    petName += consonantUpper.charAt(letter);
-                                }
-                                //Generates a vowel
-                            } else {
-                                letter = r.nextInt(5);
-                                petName += vowels.charAt(letter);
-
-                                if (doubleLetter == 0) {
-                                    petName += vowels.charAt(letter);
-                                }
-                            }
-                        }
-                        //If something else if inputted, exits system
-                    } else {
-                        System.out.println("Invalid Input");
-                        System.exit(0);
-                    }
+                    petName = makeName(choice);
                     //Prints out pet name
                     System.out.println("Your pet, named " + petName + ", has been born!");
 
@@ -204,35 +157,8 @@ public class VirtualPet {
 
                                 switch (optionG) {
                                     case "1":
-                                        System.out.println("Welcome to number guessing game.");
-                                        int randNum = r.nextInt(100) + 1;
-                                        int nAttempts = 10;
-                                        boolean gOn = true;
-                                        System.out.println("Guess the number between 1 to 100");
-                                        System.out.println("You have 10 attempts.");
+                                        int nAttempts = playGuessingGame();
 
-                                        while (gOn) {
-                                            System.out.println("Guess the random number: ");
-                                            int guess = s.nextInt();
-
-                                            nAttempts--;
-
-                                            System.out.println("You have " + nAttempts + " attempts remaining.");
-
-                                            if (guess == randNum) {
-                                                System.out.println("You guessed correctly!!!");
-                                                gOn = false;
-                                            } else if (guess > randNum) {
-                                                System.out.println("Guessed number is larger");
-                                            } else {
-                                                System.out.println("Guessed number is smaller");
-                                            }
-
-                                            if (nAttempts == 0) {
-                                                System.out.println("You've used up all your attempts :(");
-                                                gOn = false;
-                                            }
-                                        }
                                         if (nAttempts == 10) {
                                             System.out.println("You obtained 10 tokens");
                                             token += 10;
@@ -251,9 +177,8 @@ public class VirtualPet {
                                         break;
 
                                     case "2":
-                                        System.out.println("Welcome to matching game.");
-                                        String abcde = "AABBCCDDEE";
-                                        
+                                        int attemptsM = playMatchingGame();
+                                        break;
 
                                 }
                             case "2":
@@ -287,6 +212,174 @@ public class VirtualPet {
                     break;
             }
         }
+    }
+
+    public static String makeName(int choice) {
+        Scanner s = new Scanner(System.in);
+        Random r = new Random();
+        String petName = "";
+        
+        //Letters
+        String vowels = "aeiou";
+        String consonant = "bcdfghjklmnpqrstvwxyz";
+        String consonantUpper = "BCDFGHJKLMNPQRSTVWXYZ";
+        
+        //If choice is 1, user inputs the pet name
+        switch (choice) {
+            case 1:
+                System.out.println("Input your desired pet name:");
+                petName = s.next();
+                
+                //If choice is 2, pet name is randomly generated
+                break;
+            case 2:
+                //Length of name (not including double letter possibility)
+                int petNL = r.nextInt(5) + 4;
+                //Loop to generate random characters
+                for (int i = 0; i < petNL; i++) {
+                    //Double letter possibility = 1 in 5
+                    int doubleLetter = r.nextInt(5);
+                    int letter;
+                    
+                    //Checks to see if letter will be consonant
+                    if (i % 2 == 0) {
+                        //Checks to see if it's not the first letter
+                        if (!(petName.length() == 0)) {
+                            letter = r.nextInt(21);
+                            petName += consonant.charAt(letter);
+                            
+                            //Double letter if the random numberis 0
+                            if (doubleLetter == 0) {
+                                petName += consonant.charAt(letter);
+                            }
+                            
+                            //Since it's first letter = capitilized
+                        } else {
+                            letter = r.nextInt(21);
+                            petName += consonantUpper.charAt(letter);
+                        }
+                        //Generates a vowel
+                    } else {
+                        letter = r.nextInt(5);
+                        petName += vowels.charAt(letter);
+                        
+                        if (doubleLetter == 0) {
+                            petName += vowels.charAt(letter);
+                        }
+                    }
+                }
+                //If something else if inputted, exits system
+                break;
+            default:
+                System.out.println("Invalid Input");
+                System.exit(0);
+        }
+        return petName;
+    }
+
+    public static int playGuessingGame() {
+        Scanner s = new Scanner(System.in);
+        Random r = new Random();
+        System.out.println("Welcome to number guessing game.");
+        int randNum = r.nextInt(100) + 1;
+        int nAttempts = 10;
+        boolean gOn = true;
+        System.out.println("Guess the number between 1 to 100");
+        System.out.println("You have 10 attempts.");
+
+        while (gOn) {
+            System.out.println("Guess the random number: ");
+            int guess = s.nextInt();
+
+            nAttempts--;
+
+            System.out.println("You have " + nAttempts + " attempts remaining.");
+
+            if (guess == randNum) {
+                System.out.println("You guessed correctly!!!");
+                gOn = false;
+            } else if (guess > randNum) {
+                System.out.println("Guessed number is larger");
+            } else {
+                System.out.println("Guessed number is smaller");
+            }
+
+            if (nAttempts == 0) {
+                System.out.println("You've used up all your attempts :(");
+                gOn = false;
+            }
+        }
+        return nAttempts;
+    }
+
+    public static int playMatchingGame() {
+        Scanner s = new Scanner(System.in);
+        Random r = new Random();
+        System.out.println("Welcome to matching game.");
+        int attemptsM = 0;
+        String abc = "AABBCCDDEE";
+        for (int j = 0; j < 3; j++) {
+            for (int i = abc.length() - 1; i > 0; i--) {
+                int index = r.nextInt(i + 1);
+                int index2 = r.nextInt(i + 1);
+                char temp = abc.charAt(index);
+                char temp2 = abc.charAt(index2);
+                abc = abc.substring(0, index2) + temp + abc.substring(index2 + 1);
+                abc = abc.substring(0, index) + temp2 + abc.substring(index + 1);
+            }
+        }
+        boolean con = true;
+        boolean a = false;
+        boolean b = false;
+        boolean c = false;
+        boolean d = false;
+        boolean e = false;
+        while (con) {
+            int index1 = s.nextInt();
+            int index2 = s.nextInt();
+            if (index1 == -1 || index2 == -1) {
+                break;
+            }
+            for (int i = 0; i < abc.length(); i++) {
+                char letter = abc.charAt(i);
+                boolean match = abc.charAt(index1) == abc.charAt(index2) && index1 != index2;
+                if (i == index1 || i == index2) {
+                    System.out.print(letter);
+                    if (match && abc.charAt(index1) == 'A') {
+                        a = true;
+                    } else if (match && abc.charAt(index1) == 'B') {
+                        b = true;
+                    } else if (match && abc.charAt(index1) == 'C') {
+                        c = true;
+                    } else if (match && abc.charAt(index1) == 'D') {
+                        d = true;
+                    } else if (match && abc.charAt(index1) == 'E') {
+                        e = true;
+                    }
+                } else {
+                    if (letter == 'A' && a) {
+                        System.out.print(letter);
+                    } else if (letter == 'B' && b) {
+                        System.out.print(letter);
+                    } else if (letter == 'C' && c) {
+                        System.out.print(letter);
+                    } else if (letter == 'D' && d) {
+                        System.out.print(letter);
+                    } else if (letter == 'E' && d) {
+                        System.out.print(letter);
+                    } else {
+                        System.out.print("*");
+                    }
+                }
+            }
+            if (a && b && c && d && e) {
+                System.out.println("You win!");
+                con = false;
+            }
+            System.out.println();
+            attemptsM++;
+        }
+        return attemptsM;
     }
 
 }
