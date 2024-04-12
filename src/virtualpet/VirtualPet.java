@@ -11,13 +11,13 @@ import java.util.*;
  * @author michael.roy-diclemen
  */
 public class VirtualPet {
+    public static Scanner s = new Scanner(System.in);
+    public static Random r = new Random();
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        Random r = new Random();
         //Part 1: Menu
 
         //Welcome Screen
@@ -25,36 +25,19 @@ public class VirtualPet {
         System.out.println("^-^");
 
         //Part 3: username and Password 
-        System.out.println("\nPlease enter your Username and Password");
-        int attempts = 0;
-        while (!(attempts >= 3)) {
-            System.out.print("Username: ");
-            String username = s.next();
-            System.out.print("Password: ");
-            String password = s.next();
-            if (!(username.equals("snoopy") && password.equals("toto"))) {
-                System.out.println("Wrong username or password");
-                attempts++;
-            } else {
-                attempts = 4;
-            }
-        }
-        if (attempts == 3) {
-            System.out.println("Entered incorrectly too many times.");
-            System.exit(0);
-        }
+        login();
 
+        
         //Initializes Variables
         String pet = "";
         int health = 0;
         int food = 0;
         int energy = 0;
+        int cHealth;
+        int cFood;
+        int cEnergy;
+        
         String petName = "";
-
-        //Letters
-        String vowels = "aeiou";
-        String consonant = "bcdfghjklmnpqrstvwxyz";
-        String consonantUpper = "BCDFGHJKLMNPQRSTVWXYZ";
 
         while (true) {
             //Splash Screen
@@ -138,6 +121,9 @@ public class VirtualPet {
                                 break;
                         }
                     }
+                    cHealth = health;
+                    cEnergy = energy;
+                    cFood = food;
                     //Prints out stats
                     System.out.println("Stats:\nMax Health = " + health + "\nMax Food = " + food + "\nMax energy = " + energy);
 
@@ -152,34 +138,76 @@ public class VirtualPet {
                         switch (option2) {
                             case "1":
                             case "play":
-                                System.out.println("GAME MENU:\n1. Number Guessing Game\n2. Matching Game");
-                                String optionG = s.next();
-
-                                switch (optionG) {
+                                System.out.println("PLAY MENU\n1. Game\n2. Interact\n3. Exit");
+                                String optionP = s.next();
+                                switch(optionP){
                                     case "1":
-                                        int nAttempts = playGuessingGame();
+                                        System.out.println("GAME MENU:\n1. Number Guessing Game\n2. Matching Game");
+                                        String optionG = s.next();
 
-                                        if (nAttempts == 10) {
-                                            System.out.println("You obtained 10 tokens");
-                                            token += 10;
-                                        } else if (nAttempts > 7) {
-                                            System.out.println("You obtained 7 tokens");
-                                            token += 7;
-                                        } else if (nAttempts > 4) {
-                                            System.out.println("You obtained 4 tokens");
-                                            token += 4;
-                                        } else if (nAttempts > 0) {
-                                            System.out.println("You obtained 2 tokens");
-                                            token += 2;
-                                        } else {
-                                            System.out.println("You obtained 0 tokens");
+                                        switch (optionG) {
+                                            case "1":
+                                                int nAttempts = playGuessingGame();
+
+                                                if (nAttempts == 10) {
+                                                    System.out.println("You obtained 10 tokens");
+                                                    token += 10;
+                                                } else if (nAttempts > 7) {
+                                                    System.out.println("You obtained 7 tokens");
+                                                    token += 7;
+                                                } else if (nAttempts > 4) {
+                                                    System.out.println("You obtained 4 tokens");
+                                                    token += 4;
+                                                } else if (nAttempts > 0) {
+                                                    System.out.println("You obtained 2 tokens");
+                                                    token += 2;
+                                                } else {
+                                                    System.out.println("You obtained 0 tokens");
+                                                }
+                                                break;
+
+                                            case "2":
+                                                int attemptsM = playMatchingGame();
+                                                if (attemptsM <= 5 && attemptsM > 0) {
+                                                    System.out.println("You obtained 10 tokens");
+                                                    token += 10;
+                                                } else if (attemptsM <= 7 && attemptsM > 0) {
+                                                    System.out.println("You obtained 7 tokens");
+                                                    token += 7;
+                                                } else if (attemptsM <= 10 && attemptsM > 0) {
+                                                    System.out.println("You obtained 4 tokens");
+                                                    token += 4;
+                                                } else if (attemptsM > 0) {
+                                                    System.out.println("You obtained 2 tokens");
+                                                    token += 2;
+                                                } else {
+                                                    System.out.println("You obtained 0 tokens");
+                                                }
+                                                break;
+
                                         }
-                                        break;
-
                                     case "2":
-                                        int attemptsM = playMatchingGame();
+                                        System.out.println("INTERACT MENU\n1. Play\n2. Feed\n3. Groom");
+                                        String optionI = s.next();
+                                        switch(optionI){
+                                            case "1":
+                                                if(cEnergy == energy){
+                                                    System.out.println("Your pet's current energy is full");
+                                                }else{}
+                                                break;
+                                            case "2":
+                                                if(cFood == food){
+                                                    System.out.println("Your pet's current food is full");
+                                                }
+                                                break;
+                                            case "3":
+                                                if(cHealth == health){
+                                                    System.out.println("Your pet's current health is full");
+                                                }
+                                                break;
+                                        }
+                                    case "3":
                                         break;
-
                                 }
                             case "2":
                             case "instructions":
@@ -213,10 +241,29 @@ public class VirtualPet {
             }
         }
     }
+    public static void login() { 
+        System.out.println("\nPlease enter your Username and Password");
+        int attempts = 0;
+        while (!(attempts >= 3)) {
+            System.out.print("Username: ");
+            String username = s.next();
+            System.out.print("Password: ");
+            String password = s.next();
+            if (!(username.equals("snoopy") && password.equals("toto"))) {
+                System.out.println("Wrong username or password");
+                attempts++;
+            } else {
+                attempts = 4;
+            }
+        }
+        if (attempts == 3) {
+            System.out.println("Entered incorrectly too many times.");
+            System.exit(0);
+        }
+
+    }
 
     public static String makeName(int choice) {
-        Scanner s = new Scanner(System.in);
-        Random r = new Random();
         String petName = "";
         
         //Letters
@@ -280,6 +327,7 @@ public class VirtualPet {
     public static int playGuessingGame() {
         Scanner s = new Scanner(System.in);
         Random r = new Random();
+        
         System.out.println("Welcome to number guessing game.");
         int randNum = r.nextInt(100) + 1;
         int nAttempts = 10;
@@ -313,32 +361,31 @@ public class VirtualPet {
     }
 
     public static int playMatchingGame() {
-        Scanner s = new Scanner(System.in);
-        Random r = new Random();
         System.out.println("Welcome to matching game.");
         int attemptsM = 0;
         String abc = "AABBCCDDEE";
-        for (int j = 0; j < 3; j++) {
-            for (int i = abc.length() - 1; i > 0; i--) {
-                int index = r.nextInt(i + 1);
-                int index2 = r.nextInt(i + 1);
-                char temp = abc.charAt(index);
-                char temp2 = abc.charAt(index2);
-                abc = abc.substring(0, index2) + temp + abc.substring(index2 + 1);
-                abc = abc.substring(0, index) + temp2 + abc.substring(index + 1);
-            }
+        int abcL = abc.length();
+        for (int i = abcL - 1; i > 0; i--) {
+            int index = r.nextInt(abcL);
+            int index2 = r.nextInt(abcL);
+            char temp = abc.charAt(index);
+            char temp2 = abc.charAt(index2);
+            abc = abc.substring(0, index2) + temp + abc.substring(index2 + 1);
+            abc = abc.substring(0, index) + temp2 + abc.substring(index + 1);
         }
+        
         boolean con = true;
         boolean a = false;
         boolean b = false;
         boolean c = false;
         boolean d = false;
         boolean e = false;
+        
         while (con) {
             int index1 = s.nextInt();
             int index2 = s.nextInt();
             if (index1 == -1 || index2 == -1) {
-                break;
+                return 0;
             }
             for (int i = 0; i < abc.length(); i++) {
                 char letter = abc.charAt(i);
@@ -365,21 +412,33 @@ public class VirtualPet {
                         System.out.print(letter);
                     } else if (letter == 'D' && d) {
                         System.out.print(letter);
-                    } else if (letter == 'E' && d) {
+                    } else if (letter == 'E' && e) {
                         System.out.print(letter);
                     } else {
                         System.out.print("*");
                     }
                 }
             }
+            attemptsM++;
             if (a && b && c && d && e) {
-                System.out.println("You win!");
+                System.out.println("\nYou win!");
+                System.out.println("Attempts:" + attemptsM);
                 con = false;
             }
             System.out.println();
-            attemptsM++;
         }
         return attemptsM;
+    }
+    public static int petPlay(){
+    
+    }
+    
+    public static int petFeed(){
+    
+    }
+    
+    public static int petGroom(){
+    
     }
 
 }
