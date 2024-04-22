@@ -5,6 +5,7 @@
 package virtualpet;
 
 import java.util.*;
+import java.io.*;
 
 /**
  *
@@ -17,7 +18,7 @@ public class VirtualPet {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         //Part 1: Menu
 
         //Welcome Screen
@@ -25,18 +26,15 @@ public class VirtualPet {
         System.out.println("^-^");
 
         //Part 3: username and Password 
-        login();
-
+        File player = player();
         
         //Initializes Variables
         String pet = "";
-        int health = 0;
-        int food = 0;
-        int energy = 0;
-        int cHealth;
-        int cFood;
-        int cEnergy;
-        
+        int petChoice;
+        double[] stats = new double[6];
+        double[] iTracker = new double[3];
+        int token = 0;;
+        int species = 0;
         String petName = "";
 
         while (true) {
@@ -53,7 +51,7 @@ public class VirtualPet {
                 case "start":
                     //Asks user what pet they want
                     System.out.println("What pet do you want:\n1:Dog\n2:Cat\n3:Child");
-                    int petChoice = s.nextInt();
+                    petChoice = s.nextInt();
 
                     switch (petChoice) {
                         //Dog choice
@@ -63,6 +61,7 @@ public class VirtualPet {
                                    o'')}____//
                                     `_/      )
                                     (_(_/-(_/""";
+                            species = 1;
                             break;
 
                         //Cat choice
@@ -73,6 +72,7 @@ public class VirtualPet {
                                      \\"/  (
                                    ( | | )
                                   (__d b__)""";
+                            species = 2;
                             break;
 
                         //Child choice
@@ -92,6 +92,7 @@ public class VirtualPet {
                                    _|j\"\"\"\"\"""|j_
                                    | |_______| |
                                    |_|       |_| """;
+                            species = 3;
                             break;
                     }
 
@@ -111,23 +112,27 @@ public class VirtualPet {
                         int order = r.nextInt(3);
                         switch (order) {
                             case 0:
-                                health++;
+                                //Health
+                                stats[0]++;
                                 break;
                             case 1:
-                                energy++;
+                                //Food
+                                stats[2]++;
                                 break;
                             case 2:
-                                food++;
+                                //Energy
+                                stats[4]++;
                                 break;
                         }
                     }
-                    cHealth = health;
-                    cEnergy = energy;
-                    cFood = food;
+                    //Health
+                    stats[1] = stats[0];
+                    //Food
+                    stats[3] = stats[2];
+                    //Energy
+                    stats[5] = stats[4];
                     //Prints out stats
-                    System.out.println("Stats:\nMax Health = " + health + "\nMax Food = " + food + "\nMax energy = " + energy);
-
-                    int token = 0;
+                    System.out.println("Stats:\nMax Health = " + stats[0] + "\nMax Food = " + stats[2] + "\nMax energy = " + stats[4]);
 
                     boolean alive = true;
                     while (alive == true) {
@@ -191,18 +196,36 @@ public class VirtualPet {
                                         String optionI = s.next();
                                         switch(optionI){
                                             case "1":
-                                                if(cEnergy == energy){
-                                                    System.out.println("Your pet's current energy is full");
-                                                }else{}
+                                                //Health
+                                                if(stats[0] == stats[1]){
+                                                    System.out.println("Your pet's current health is full");
+                                                }else{
+                                                    stats[1] += petGroom(iTracker);
+                                                    if(stats[1] > stats[0]){
+                                                       stats[1] = stats[0];
+                                                    }
+                                                }
                                                 break;
                                             case "2":
-                                                if(cFood == food){
+                                                //Food
+                                                if(stats[2] == stats[3]){
                                                     System.out.println("Your pet's current food is full");
+                                                }else{
+                                                    stats[3] += petPlay(iTracker);
+                                                    if(stats[3] > stats[2]){
+                                                       stats[3] = stats[2];
+                                                    }
                                                 }
                                                 break;
                                             case "3":
-                                                if(cHealth == health){
-                                                    System.out.println("Your pet's current health is full");
+                                                //Energy
+                                                if(stats[4] == stats[5]){
+                                                    System.out.println("Your pet's current energy is full");
+                                                }else{
+                                                    stats[5] += petGroom(iTracker);
+                                                    if(stats[5] > stats[4]){
+                                                       stats[5] = stats[4];
+                                                    }
                                                 }
                                                 break;
                                         }
@@ -231,6 +254,7 @@ public class VirtualPet {
                 //Exits program
                 case "3":
                 case "exit":
+                    overwrite(player, species, stats, token);
                     System.exit(0);
                     break;
 
@@ -241,26 +265,50 @@ public class VirtualPet {
             }
         }
     }
-    public static void login() { 
-        System.out.println("\nPlease enter your Username and Password");
+    public static File player() throws IOException {
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter your username. ");
+        String u = s.next();
+        String p;
         int attempts = 0;
-        while (!(attempts >= 3)) {
-            System.out.print("Username: ");
-            String username = s.next();
-            System.out.print("Password: ");
-            String password = s.next();
-            if (!(username.equals("snoopy") && password.equals("toto"))) {
-                System.out.println("Wrong username or password");
-                attempts++;
-            } else {
-                attempts = 4;
+        File player = new File(u + ".txt");
+        if (player.exists()) {
+            while (true) {
+                Scanner r = new Scanner(player);
+                System.out.println("Enter your password");
+                p = s.next();
+                if (r.next().equals(p)) {
+                    //Prints out information
+                    break;
+                } else {
+                    System.out.println("Incorrect password. Try again. ");
+                    attempts++;
+                    if (attempts == 3) {
+                        System.out.println("Too many attempts. Try again later.");
+                        System.exit(0);
+                    }
+                }
             }
+            System.out.println("welcome back " + u);
+        } else {
+            FileWriter w = new FileWriter(player);
+            System.out.println("Enter your desired password. ");
+            p = s.next();
+            w.write(p);
+            w.close();
+            System.out.println("Welcome " + u);
         }
-        if (attempts == 3) {
-            System.out.println("Entered incorrectly too many times.");
-            System.exit(0);
-        }
+        return player;
+    }
 
+    public static void overwrite(File player, int s, double[] stats, int tokens) {
+        try {
+            FileWriter w = new FileWriter(player, true);
+            w.write("\n" + s + "\n" + Arrays.toString(stats) + "\n" + tokens);
+            w.close();
+        } catch (IOException e) {
+            System.out.println("Error");
+        }
     }
 
     public static String makeName(int choice) {
@@ -324,6 +372,27 @@ public class VirtualPet {
         return petName;
     }
 
+    public static double petPlay(double[] a){
+        double energyG = (r.nextInt(10) + 1.0)/10.0;
+        System.out.println("You played with your pet, you gained: " + energyG + " energy.");
+        a[2]++;
+        return energyG;
+    }
+    
+    public static double petFeed(double[] a){
+        double foodG = (r.nextInt(10) + 1.0)/10.0;
+        System.out.println("You fed your pet, you gained: " + foodG + " food.");
+        a[1]++;
+        return foodG;
+    }
+    
+    public static double petGroom(double[] a){
+        double healthG = (r.nextInt(10) + 1.0)/10.0;
+        System.out.println("You groomed your pet, you gained: " + healthG + " health.");
+        a[0]++;
+        return healthG;
+    }
+    
     public static int playGuessingGame() {
         Scanner s = new Scanner(System.in);
         Random r = new Random();
@@ -429,16 +498,4 @@ public class VirtualPet {
         }
         return attemptsM;
     }
-    public static int petPlay(){
-    
-    }
-    
-    public static int petFeed(){
-    
-    }
-    
-    public static int petGroom(){
-    
-    }
-
 }
