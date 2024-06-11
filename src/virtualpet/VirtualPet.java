@@ -12,6 +12,7 @@ import java.io.*;
  * @author michael.roy-diclemen
  */
 public class VirtualPet {
+    //static variables to use in other functions
     public static Scanner s = new Scanner(System.in);
     public static Random r = new Random();
     public static boolean newGame = true;
@@ -111,6 +112,7 @@ public class VirtualPet {
                         //Prints out stats
                         System.out.println("Stats:\nMax Health = " + stats[0] + "\nMax Food = " + stats[2] + "\nMax energy = " + stats[4]);
                     }else{
+                        //if new game is false reads all data from file player and stores it in the variables 
                         System.out.println("Welcome Back " + user);
                         String placeholder = reader.readLine();
                         petName = reader.readLine();
@@ -121,6 +123,7 @@ public class VirtualPet {
                         
                         pet = assignPet(species);
                         
+                        //prints the name and the ascii art of the pet
                         System.out.println(petName + "\n" + pet);
                         
                         //Prints out stats
@@ -133,7 +136,7 @@ public class VirtualPet {
                         
                     }
                     
-
+                    
                     boolean alive = true;
                     while (alive == true) {
                         System.out.println("MENU\n1. Play\n2. Instructions\n3. Exit");
@@ -152,8 +155,10 @@ public class VirtualPet {
 
                                         switch (optionG) {
                                             case "1":
+                                                //calls guessing game
                                                 int nAttempts = playGuessingGame();
 
+                                                //gives tokens depending on the attempts used
                                                 if (nAttempts == 10) {
                                                     System.out.println("You obtained 10 tokens");
                                                     token += 10;
@@ -239,6 +244,7 @@ public class VirtualPet {
 
                             case "3":
                             case "exit":
+                                //overwrites the files data and stores the current data
                                 overwrite(player, petName, species, stats, iTracker, token);
                                 System.exit(0);
                                 break;
@@ -256,6 +262,7 @@ public class VirtualPet {
                 //Exits program
                 case "3":
                 case "exit":
+                    //overwrites the files data and stores the current data
                     overwrite(player, petName, species, stats, iTracker, token);
                     System.exit(0);
                     break;
@@ -304,9 +311,12 @@ public class VirtualPet {
 
     public static void overwrite(File player, String pName, int s, double[] stats, double[] iTracker, int tokens) {
         try {
+            //Creates a buffer reader to read the file
             BufferedReader r = new BufferedReader(new FileReader(player));
+            //gets first line for the password
             String pass = r.readLine();
             FileWriter w = new FileWriter(player);
+            //stores all data into the file
             w.write(pass + "\n" + pName + "\n" + s + "\n" + Arrays.toString(stats) + "\n" + Arrays.toString(iTracker) + "\n" + tokens);
             w.close();
         } catch (IOException e) {
@@ -397,12 +407,12 @@ public class VirtualPet {
     }
     
     public static int playGuessingGame() {
-        Scanner s = new Scanner(System.in);
-        Random r = new Random();
-        
+
         System.out.println("Welcome to number guessing game.");
+        //random number 
         int randNum = r.nextInt(100) + 1;
         int nAttempts = 10;
+        //game on variable to see if game is running
         boolean gOn = true;
         System.out.println("Guess the number between 1 to 100");
         System.out.println("You have 10 attempts.");
@@ -463,7 +473,9 @@ public class VirtualPet {
             for (int i = 0; i < abc.length(); i++) {
                 char letter = abc.charAt(i);
                 if (i == index1 || i == index2) {
+                    //prints out the letter if the indexes is given out
                     System.out.print(letter);
+                    //checks to see if there is a match, if there is the corresponding boolean variable is turned to true;
                     if (match && abc.charAt(index1) == 'A') {
                         a = true;
                     } else if (match && abc.charAt(index1) == 'B') {
@@ -476,6 +488,7 @@ public class VirtualPet {
                         e = true;
                     }
                 } else {
+                    //checks to see if the boolean variable is true to know if a match has already happened
                     if (letter == 'A' && a) {
                         System.out.print(letter);
                     } else if (letter == 'B' && b) {
@@ -501,6 +514,7 @@ public class VirtualPet {
             }
             System.out.println();
         }
+        //returns the amount of attempts
         return attemptsM;
     }
 
