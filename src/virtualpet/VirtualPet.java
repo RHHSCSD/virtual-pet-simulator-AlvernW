@@ -14,6 +14,7 @@ import java.io.*;
 public class VirtualPet {
     public static Scanner s = new Scanner(System.in);
     public static Random r = new Random();
+    public static boolean newGame = true;
 
     /**
      * @param args the command line arguments
@@ -23,19 +24,33 @@ public class VirtualPet {
 
         //Welcome Screen
         System.out.println("Welcome to Petopia");
-        System.out.println("^-^");
+        System.out.println("""
+                            _._     _,-'""`-._
+                           (,-.`._,'(       |\\`-/|
+                               `-.-' \\ )-`( , o o)
+                                     `-    \\`_`"'-""");
 
         //Part 3: username and Password 
-        File player = player();
+        System.out.println("\nEnter your username");
+        String user = s.next();
+        File player = player(user);
         
         //Initializes Variables
+        BufferedReader reader = new BufferedReader(new FileReader(player));
+        
+        //Ascii of pet
         String pet = "";
-        int petChoice;
+        //Array to count the stats: 0 is health, 1 is current health, 2 is food, 3 is current food, 4 is energy, 5 is current energy
         double[] stats = new double[6];
+        //Array to count the amount of times the pet has been interacted with
         double[] iTracker = new double[3];
-        int token = 0;;
+        //amount of tokens
+        int token = 0;
+        //species number
         int species = 0;
+        //name of pet
         String petName = "";
+        
 
         while (true) {
             //Splash Screen
@@ -50,89 +65,74 @@ public class VirtualPet {
                 case "1":
                 case "start":
                     //Asks user what pet they want
-                    System.out.println("What pet do you want:\n1:Dog\n2:Cat\n3:Child");
-                    petChoice = s.nextInt();
+                    
+                    if(newGame){
+                        System.out.println("What pet do you want:\n1:Dog\n2:Cat\n3:Child");
+                        int petChoice = s.nextInt();
 
-                    switch (petChoice) {
-                        //Dog choice
-                        case 1:
-                            pet = """
-                                     __      _
-                                   o'')}____//
-                                    `_/      )
-                                    (_(_/-(_/""";
-                            species = 1;
-                            break;
+                        species = petChoice;
+                        pet = assignPet(petChoice);
 
-                        //Cat choice
-                        case 2:
-                            pet = """
-                                    /\\_/\\  (
-                                   ( ^.^ ) _)
-                                     \\"/  (
-                                   ( | | )
-                                  (__d b__)""";
-                            species = 2;
-                            break;
+                        //Prints out ascii art choice of pet
+                        System.out.println(pet);
 
-                        //Child choice
-                        case 3:
-                            pet = """
-                                    ,---------.
-                                    ||\"\"\"\"\"""||
-                                    ||       ||
-                                    |/-->&<--\\|
-                                    |  (._.)  |
-                                    |  ( @ )  |
-                                    | /|`"'|\\ |
-                                   //(_\\___/_)\\\\
-                                   \\\\_()___()_//
-                                    `+---I---+'
-                                    |\\(_)|(_)/|
-                                   _|j\"\"\"\"\"""|j_
-                                   | |_______| |
-                                   |_|       |_| """;
-                            species = 3;
-                            break;
-                    }
+                        //Part 4: Pet name
+                        System.out.println("Naming: \n1.Choose\n2.Generate");
+                        int choice = s.nextInt();
 
-                    //Prints out ascii art choice of pet
-                    System.out.println(pet);
+                        petName = makeName(choice);
+                        //Prints out pet name
+                        System.out.println("Your pet, named " + petName + ", has been born!");
 
-                    //Part 4: Pet name
-                    System.out.println("Naming: \n1.Choose\n2.Generate");
-                    int choice = s.nextInt();
-
-                    petName = makeName(choice);
-                    //Prints out pet name
-                    System.out.println("Your pet, named " + petName + ", has been born!");
-
-                    //Part 5: Pet Stats
-                    for (int i = 0; i < 20; i++) {
-                        int order = r.nextInt(3);
-                        switch (order) {
-                            case 0:
-                                //Health
-                                stats[0]++;
-                                break;
-                            case 1:
-                                //Food
-                                stats[2]++;
-                                break;
-                            case 2:
-                                //Energy
-                                stats[4]++;
-                                break;
+                        //Part 5: Pet Stats
+                        for (int i = 0; i < 20; i++) {
+                            int order = r.nextInt(3);
+                            switch (order) {
+                                case 0:
+                                    //Health
+                                    stats[0]++;
+                                    break;
+                                case 1:
+                                    //Food
+                                    stats[2]++;
+                                    break;
+                                case 2:
+                                    //Energy
+                                    stats[4]++;
+                                    break;
+                            }
                         }
+                        //Health
+                        stats[1] = stats[0];
+                        //Food
+                        stats[3] = stats[2];
+                        //Energy
+                        stats[5] = stats[4];
+                        //Prints out stats
+                        System.out.println("Stats:\nMax Health = " + stats[0] + "\nMax Food = " + stats[2] + "\nMax energy = " + stats[4]);
+                    }else{
+                        System.out.println("Welcome Back " + user);
+                        String placeholder = reader.readLine();
+                        petName = reader.readLine();
+                        species = Integer.parseInt(reader.readLine());
+                        stats = stringToDoubleArray(reader.readLine());
+                        iTracker = stringToDoubleArray(reader.readLine());
+                        token = Integer.parseInt(reader.readLine());
+                        
+                        pet = assignPet(species);
+                        
+                        System.out.println(petName + "\n" + pet);
+                        
+                        //Prints out stats
+                        System.out.println("Stats:\nMax Health = " + stats[0] + "\nMax Food = " + stats[2] + "\nMax energy = " + stats[4]);
+                        System.out.println();
+                        //Current pet stats
+                        System.out.println("Current Stats:\nCurrent Health = " + stats[1] + "\nCurrent Food = " + stats[3] + "\nCurrent energy = " + stats[5]);
+                                
+                        System.out.println("Tokens:" + token);
+                        
                     }
-                    //Health
-                    stats[1] = stats[0];
-                    //Food
-                    stats[3] = stats[2];
-                    //Energy
-                    stats[5] = stats[4];
-                    //Prints out stats
-                    System.out.println("Stats:\nMax Health = " + stats[0] + "\nMax Food = " + stats[2] + "\nMax energy = " + stats[4]);
+                    
 
                     boolean alive = true;
                     while (alive == true) {
@@ -191,6 +191,7 @@ public class VirtualPet {
                                                 break;
 
                                         }
+                                        break;
                                     case "2":
                                         System.out.println("INTERACT MENU\n1. Play\n2. Feed\n3. Groom");
                                         String optionI = s.next();
@@ -238,6 +239,7 @@ public class VirtualPet {
 
                             case "3":
                             case "exit":
+                                overwrite(player, petName, species, stats, iTracker, token);
                                 System.exit(0);
                                 break;
                         }
@@ -254,7 +256,7 @@ public class VirtualPet {
                 //Exits program
                 case "3":
                 case "exit":
-                    overwrite(player, species, stats, token);
+                    overwrite(player, petName, species, stats, iTracker, token);
                     System.exit(0);
                     break;
 
@@ -265,13 +267,10 @@ public class VirtualPet {
             }
         }
     }
-    public static File player() throws IOException {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter your username. ");
-        String u = s.next();
+    public static File player(String user) throws IOException {
         String p;
         int attempts = 0;
-        File player = new File(u + ".txt");
+        File player = new File(user + ".txt");
         if (player.exists()) {
             while (true) {
                 Scanner r = new Scanner(player);
@@ -289,22 +288,26 @@ public class VirtualPet {
                     }
                 }
             }
-            System.out.println("welcome back " + u);
+            System.out.println("welcome back " + user);
+            newGame = false;
         } else {
             FileWriter w = new FileWriter(player);
             System.out.println("Enter your desired password. ");
             p = s.next();
             w.write(p);
             w.close();
-            System.out.println("Welcome " + u);
+            System.out.println("Welcome " + user);
+            newGame = true;
         }
         return player;
     }
 
-    public static void overwrite(File player, int s, double[] stats, int tokens) {
+    public static void overwrite(File player, String pName, int s, double[] stats, double[] iTracker, int tokens) {
         try {
-            FileWriter w = new FileWriter(player, true);
-            w.write("\n" + s + "\n" + Arrays.toString(stats) + "\n" + tokens);
+            BufferedReader r = new BufferedReader(new FileReader(player));
+            String pass = r.readLine();
+            FileWriter w = new FileWriter(player);
+            w.write(pass + "\n" + pName + "\n" + s + "\n" + Arrays.toString(stats) + "\n" + Arrays.toString(iTracker) + "\n" + tokens);
             w.close();
         } catch (IOException e) {
             System.out.println("Error");
@@ -453,12 +456,12 @@ public class VirtualPet {
         while (con) {
             int index1 = s.nextInt();
             int index2 = s.nextInt();
+            boolean match = abc.charAt(index1) == abc.charAt(index2) && index1 != index2;
             if (index1 == -1 || index2 == -1) {
                 return 0;
             }
             for (int i = 0; i < abc.length(); i++) {
                 char letter = abc.charAt(i);
-                boolean match = abc.charAt(index1) == abc.charAt(index2) && index1 != index2;
                 if (i == index1 || i == index2) {
                     System.out.print(letter);
                     if (match && abc.charAt(index1) == 'A') {
@@ -493,9 +496,68 @@ public class VirtualPet {
                 System.out.println("\nYou win!");
                 System.out.println("Attempts:" + attemptsM);
                 con = false;
+            }else{
+                System.out.println(" Try again");
             }
             System.out.println();
         }
         return attemptsM;
+    }
+
+    public static String assignPet(int petChoice) {
+        String pet = "";
+        switch (petChoice) {
+            //Dog choice
+            case 1:
+                pet = """
+                                     __      _
+                                   o'')}____//
+                                    `_/      )
+                                    (_(_/-(_/""";
+                break;
+
+            //Cat choice
+            case 2:
+                pet = """
+                                    /\\_/\\  (
+                                   ( ^.^ ) _)
+                                     \\"/  (
+                                   ( | | )
+                                  (__d b__)""";
+                break;
+
+            //Child choice
+            case 3:
+                pet = """
+                                    ,---------.
+                                    ||\"\"\"\"\"""||
+                                    ||       ||
+                                    |/-->&<--\\|
+                                    |  (._.)  |
+                                    |  ( @ )  |
+                                    | /|`"'|\\ |
+                                   //(_\\___/_)\\\\
+                                   \\\\_()___()_//
+                                    `+---I---+'
+                                    |\\(_)|(_)/|
+                                   _|j\"\"\"\"\"""|j_
+                                   | |_______| |
+                                   |_|       |_| """;
+                break;
+        }
+        return pet;
+    }
+    
+    public static double[] stringToDoubleArray(String str) {
+        // Remove brackets
+        str = str.replace("[", "").replace("]", "");
+        // Split the string by commas and spaces
+        String[] stringArray = str.split(", ");
+        // Convert each element to double
+        double[] doubleArray = new double[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            doubleArray[i] = Double.parseDouble(stringArray[i]);
+        }
+        return doubleArray;
     }
 }
